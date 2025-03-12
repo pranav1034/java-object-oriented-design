@@ -1,80 +1,86 @@
 import java.util.ArrayList;
 
-// Bank and Customer (Association)
-class Bank {
-    protected String name;
-    private ArrayList<Account> accounts;
+// Customer class
+class Customer {
+    private String name;
+    private Bank bank;
+    private double balance;
 
-    public Bank(String name) {
+    public Customer(String name, Bank bank, double initialDeposit) {
         this.name = name;
-        this.accounts = new ArrayList<>();
+        this.bank = bank;
+        this.balance = initialDeposit;
     }
-
-    public void openAccount(Customer customer, double initialDeposit) {
-        Account newAccount = new Account(customer,  initialDeposit);
-        accounts.add(newAccount);
-        customer.addAccount(newAccount);
+    public String getName() {
+        return name;
     }
-
-    public void displayAccounts() {
-        System.out.println("Bank: " + name);
-        for (Account account : accounts) {
-            System.out.println("Account Holder: " + account.getCustomer().getName() + ", Balance: $" + account.getBalance());
+    public double getBalance() {
+        return balance;
+    }
+    public void deposit(double amount) {
+        balance += amount;
+        System.out.println(name + " deposited " + amount + ". New Balance: " + balance);
+    }
+    public void withdraw(double amount) {
+        if (amount <= balance) {
+            balance -= amount;
+            System.out.println(name + " withdrew " + amount + ". New Balance: " + balance);
+        } else {
+            System.out.println(name + " has insufficient funds!");
         }
+    }
+
+    public void viewAccount() {
+        System.out.println("Customer: " + name + ", Bank: " + bank.getName() + ", Balance: " + balance);
     }
 }
 
-class Customer {
+// Bank class that contains multiple Customer objects (Association)
+class Bank {
     private String name;
-    private ArrayList<Account> accounts;
+    private ArrayList<Customer> customers;
 
-    public Customer(String name) {
+    public Bank(String name) {
         this.name = name;
-        this.accounts = new ArrayList<>();
+        this.customers = new ArrayList<>();
     }
 
     public String getName() {
         return name;
     }
 
-    public void addAccount(Account account) {
-        accounts.add(account);
+    public void addCustomer(Customer customer) {
+        customers.add(customer);
     }
 
-    public void viewAccounts() {
-        System.out.println("Customer: " + name + " has the following accounts:");
-        for (Account account : accounts) {
-            System.out.println("Bank: " + account.getBank().name + ", Balance: $" + account.getBalance());
+    public void displayCustomers() {
+        System.out.println("Bank: " + name + " has the following customers:");
+        for (Customer customer : customers) {
+            customer.viewAccount();
         }
-    }
-class Accoun
-    private Customer customer;
-    private Bank bank;
-    private double balance;
-
-    public Account(Customer customer, double initialDeposit) {
-        this.customer = customer;
-        this.balance = initialDeposit;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public Bank getBank() {
-        return bank;
-    }
-
-    public double getBalance() {
-        return balance;
     }
 
     public static void main(String[] args) {
-        // Association Example
-        Bank bank = new Bank("National Bank");
-        Customer customer = new Customer("Alice");
-        bank.openAccount(customer, 5000);
-        bank.displayAccounts();
-        customer.viewAccounts();
+        // Creating Bank
+        Bank bank = new Bank("IDFC Bank");
+
+        // Creating Customers with Initial Deposits
+        Customer customer1 = new Customer("Pranav", bank, 50000);
+        Customer customer2 = new Customer("Abhay", bank, 30000);
+
+        // Associating Customers with the Bank
+        bank.addCustomer(customer1);
+        bank.addCustomer(customer2);
+
+        // Displaying Customers and Their Account Details
+        bank.displayCustomers();
+        System.out.println();
+
+        // Performing Transactions
+        customer1.deposit(1000);
+        customer2.withdraw(500);
+
+        System.out.println("\nAfter Transactions:");
+        bank.displayCustomers();
     }
 }
